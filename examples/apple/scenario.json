@@ -1,0 +1,104 @@
+{
+  "title": "Apple 官网首页菜单讲解演示",
+  "base_url": "https://www.apple.com.cn",
+  "viewport": [
+    1280,
+    800
+  ],
+  "voice": "zh-CN-XiaoxiaoNeural",
+  "rate": "+8%",
+  "subtitle": true,
+  "banner": true,
+  "out": "apple-home-demo.mp4",
+  "tail_hold": 1.5,
+  "steps": [
+    {
+      "name": "intro",
+      "banner_text": "① Apple 官网首页\n整体概览",
+      "narration": "大家好，欢迎来到苹果官方网站首页。页面延续苹果极简大气的设计风格，顶部是贯穿全站的全局导航菜单。",
+      "actions": [
+        [
+          "goto",
+          ""
+        ],
+        [
+          "hover",
+          "body"
+        ],
+        [
+          "wait",
+          1600
+        ]
+      ],
+      "pause_after": 1.2
+    },
+    {
+      "name": "menu_overview",
+      "banner_text": "② 全局导航菜单\n悬停展开子菜单",
+      "narration": "导航栏依次排列商店、Mac、iPad、iPhone、Watch 等品类入口，右侧是搜索框和购物袋。把鼠标移到任意品类菜单上，即可展开对应的子菜单。",
+      "actions": [
+        [
+          "hover",
+          ".globalnav-submenu-trigger-link:has-text(\"Mac\")"
+        ],
+        [
+          "wait",
+          2400
+        ]
+      ],
+      "pause_after": 1.2
+    },
+    {
+      "name": "iphone_menu",
+      "banner_text": "③ 悬停 iPhone\n查看产品子菜单",
+      "narration": "比如将鼠标移到 iPhone 菜单，立刻展开对应专区，包括产品介绍、机型对比和选购入口，路径非常清晰。",
+      "actions": [
+        [
+          "hover",
+          ".globalnav-submenu-trigger-link:has-text(\"iPhone\")"
+        ],
+        [
+          "wait",
+          2400
+        ]
+      ],
+      "pause_after": 1.2
+    },
+    {
+      "name": "watch_menu",
+      "banner_text": "④ 悬停 Watch\n查看新品与配件",
+      "narration": "移到 Watch 菜单同样如此，可以快速访问新款手表、表带和配件资讯，响应即时流畅，交互体验出色。",
+      "actions": [
+        [
+          "hover",
+          ".globalnav-submenu-trigger-link:has-text(\"Watch\")"
+        ],
+        [
+          "wait",
+          2400
+        ]
+      ],
+      "pause_after": 1.2
+    },
+    {
+      "name": "hero_conclusion",
+      "banner_text": "⑤ 首页正文\n新品展示区",
+      "narration": "最后回到首页正文，展示了最新发布的 iPhone 系列与 Apple Watch 新品，大图加短文案，视觉冲击力强。这就是苹果官网首页的演示，谢谢观看。",
+      "actions": [
+        [
+          "eval",
+          "document.body.dispatchEvent(new MouseEvent('mousemove',{clientX:2,clientY:2}))"
+        ],
+        [
+          "scroll",
+          520
+        ],
+        [
+          "wait",
+          1800
+        ]
+      ],
+      "pause_after": 1.2
+    }
+  ]
+}

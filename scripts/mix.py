@@ -118,7 +118,10 @@ def main():
         print("  Ubuntu: apt install fonts-noto-cjk")
     fc = build_filter(len(picked), stamps_ms, picked, use_sub, srt, font, work)
 
-    out = os.path.abspath(sc.get("out") or os.path.join(work, "demo.mp4"))
+    out = sc.get("out") or os.path.join(work, "demo.mp4")
+    if not os.path.isabs(out):  # 相对路径相对 workdir（跟随剧本，可移植）
+        out = os.path.join(work, out)
+    out = os.path.abspath(out)
     os.makedirs(os.path.dirname(out) or ".", exist_ok=True)
     cmd = [find_ffmpeg(), "-y", "-i", raw]
     cmd += sum([["-i", m["file"]] for m in picked], [])

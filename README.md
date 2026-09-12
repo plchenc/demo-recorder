@@ -64,6 +64,17 @@ bash run.sh examples/hello/scenario.json
 
 自带示例演示了点击、逐字输入、下拉选择、等待文本四类动作。
 
+**在线网站示例**（真实用户案例，Mac 上录制）：
+
+```bash
+bash run.sh examples/apple/scenario.json
+# Apple 官网首页菜单讲解：hover 展开导航子菜单 + 滚动 + 5 段解说，58s 成片
+```
+
+展示了进阶用法：`:has-text()` 组合定位、`hover` 触发悬浮菜单、`eval` 派发事件
+收起菜单。注意：在线示例依赖目标站点当前结构与网络可达性，站点改版后需更新
+剧本中的选择器。
+
 ## 3. 写你自己的剧本
 
 新建 `my.json`（完整字段见第 4 节），然后：
