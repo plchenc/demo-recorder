@@ -5,7 +5,7 @@ description: >
   Playwright 真实操作录屏（headless Chrome 内部合成，无需桌面环境）+
   字幕自动生成烧录 + ffmpeg 混音转 H.264。适用于产品演示、操作教程、
   AI 应用 showcase 视频。
-version: 1.0
+version: 1.2
 ---
 
 # demo-recorder

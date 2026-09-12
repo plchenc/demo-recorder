@@ -128,6 +128,8 @@ bash run.sh my.json --mix-only      # 只重新合成（换字幕开关/清晰�
 | `rate` | "+8%" | 语速（可 "-10%" 放慢） |
 | `subtitle` | true | 是否烧录字幕（srt 文件总会生成，可外挂） |
 | `banner` | true | 右下角步骤角标（当前演示到哪一步） |
+| `intro_card` | true | 首帧信息片头：展示工具名/版本/能力/本片元信息，保持 2 秒后进入演示 |
+| `intro_card_secs` | 2.0 | 片头停留秒数（设 0 且 intro_card=false 可完全关闭） |
 | `out` | out/demo.mp4 | 成片路径 |
 | `tail_hold` | 1.5 | 结束后静止秒数 |
 | `chrome_path` | 自动 | 指定浏览器（默认自动找系统 Chrome → playwright 内置） |

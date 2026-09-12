@@ -57,6 +57,56 @@ BANNER_JS = """
 }
 """
 
+INTRO_CARD_CSS = """
+* { margin:0; box-sizing:border-box; }
+body { font-family: system-ui,"Noto Sans CJK SC","PingFang SC",sans-serif;
+  background: linear-gradient(135deg,#0b1020 0%,#151d38 55%,#0f172a 100%);
+  color:#e2e8f0; width:100vw; height:100vh;
+  display:flex; align-items:center; justify-content:center; }
+.wrap { text-align:center; max-width:860px; padding:0 40px; }
+.logo { font-size:30px; margin-bottom:18px; }
+h1 { font-size:56px; letter-spacing:1px; color:#fff; margin-bottom:10px; }
+h1 .accent { color:#7CFC98; }
+.slogan { font-size:20px; color:#94a3b8; margin-bottom:34px; }
+.feats { display:flex; gap:14px; justify-content:center; margin-bottom:38px; }
+.feat { background:rgba(124,252,152,.08); border:1px solid rgba(124,252,152,.25);
+  color:#a7f3c0; font-size:15px; padding:8px 18px; border-radius:999px; }
+.meta { font-size:15px; color:#64748b; line-height:1.9; }
+.meta b { color:#cbd5e1; font-weight:600; }
+"""
+
+
+def _skill_version():
+    """从 SKILL.md frontmatter 读版本（失败回落 1.x）"""
+    import re
+    try:
+        sk = os.path.join(os.path.dirname(os.path.dirname(
+            os.path.abspath(__file__))), "SKILL.md")
+        m = re.search(r"^version:\s*(.+)$", open(sk, encoding="utf-8").read(),
+                      re.M)
+        return m.group(1).strip() if m else "1.x"
+    except Exception:  # noqa: BLE001
+        return "1.x"
+
+
+def intro_card_html(sc):
+    """首帧信息片头：工具名/版本/能力/本片元信息"""
+    import datetime
+    vw, vh = sc.get("viewport", [1280, 800])
+    title = sc.get("title") or sc.get("base_url", "")
+    today = datetime.date.today().strftime("%Y-%m-%d")
+    return f"""<!DOCTYPE html><html><head><meta charset="utf-8">
+<style>{INTRO_CARD_CSS}</style></head><body><div class="wrap">
+  <div class="logo">🎬</div>
+  <h1>demo-<span class="accent">recorder</span></h1>
+  <div class="slogan">一份 JSON 剧本 → 自动配音 · 真实录屏 · 字幕成片</div>
+  <div class="feats"><span class="feat">edge-tts 配音</span>
+    <span class="feat">Playwright 真实操作</span>
+    <span class="feat">srt 字幕烧录</span><span class="feat">H.264 通用格式</span></div>
+  <div class="meta"><b>{title}</b><br>
+    v{_skill_version()} · {vw}×{vh} · {today}</div>
+</div></body></html>"""
+
 
 def resolve_locator(page, spec):
     """定位器 DSL:
@@ -237,6 +287,13 @@ def main():
         page.set_default_timeout(20000)
 
         try:
+            # 首帧信息片头：demo-recorder 基本信息，保持 intro_card_secs 秒
+            # （t0 之前，不占音频时间轴——片头后解说立即开始）
+            if sc.get("intro_card", True):
+                page.goto("about:blank")
+                page.set_content(intro_card_html(sc), wait_until="domcontentloaded")
+                page.wait_for_timeout(
+                    int(sc.get("intro_card_secs", 2.0) * 1000))
             # 首个动作前先落到页面（保证录到真实首屏）
             first_goto = next((s for s in steps
                                if s.get("actions") and s["actions"][0][0] == "goto"),
