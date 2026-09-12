@@ -287,8 +287,10 @@ def main():
         page.set_default_timeout(20000)
 
         try:
+            # 时间轴起点 = 片头开始：片头正式占用片首 intro_card_secs 秒
+            # （期间无解说音频、无字幕——stamps/srt/adelay 全部自动偏移）
+            t0 = time.time()
             # 首帧信息片头：demo-recorder 基本信息，保持 intro_card_secs 秒
-            # （t0 之前，不占音频时间轴——片头后解说立即开始）
             if sc.get("intro_card", True):
                 page.goto("about:blank")
                 page.set_content(intro_card_html(sc), wait_until="domcontentloaded")
@@ -303,7 +305,6 @@ def main():
             page.wait_for_timeout(2000)
             if use_banner:
                 page.evaluate(BANNER_JS)
-            t0 = time.time()
 
             dur_by_name = {m["name"]: m["dur_ms"] / 1000 for m in manifest}
             for idx, st in enumerate(steps, 1):
