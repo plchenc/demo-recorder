@@ -1,0 +1,49 @@
+{
+  "title": "demo-recorder hello 示例",
+  "base_url": "file:///home/plchenc/.copaw/skills/demo-recorder/examples/hello/page.html",
+  "viewport": [1280, 800],
+  "voice": "zh-CN-XiaoxiaoNeural",
+  "rate": "+8%",
+  "subtitle": true,
+  "banner": true,
+  "out": "hello-demo.mp4",
+  "tail_hold": 1.5,
+  "steps": [
+    {
+      "name": "intro",
+      "banner_text": "demo-recorder 示例\n一条剧本 → 配音 + 录屏 + 字幕 一键成片",
+      "narration": "大家好，这是 demo-recorder 的最小示例。只需要写一份剧本文件，就能得到带配音讲解、带字幕的网页演示视频。",
+      "actions": [["goto", ""]],
+      "pause_after": 1.0
+    },
+    {
+      "name": "counter",
+      "banner_text": "① 动作演示：click / 连击动画",
+      "narration": "剧本中的每一步操作都会被真实执行并录制。比如点击添加一单，数字立刻变化，连续点击会有动画效果，和真实用户操作完全一致。",
+      "actions": [
+        ["click", "#add", 400],
+        ["click", "#x5", 900]
+      ],
+      "pause_after": 0.8
+    },
+    {
+      "name": "form",
+      "banner_text": "② 输入演示：type 逐字 / select 下拉",
+      "narration": "输入类动作支持逐字键入，模拟真人打字节奏；下拉框选择也如实记录。这是完全没有剪切的连续录屏。",
+      "actions": [
+        ["type", "#cust", "华为技术有限公司", 45],
+        ["select", "#prod", "GPU 服务器 AP100"],
+        ["click", "#submit", 300],
+        ["wait_text", "订单已受理", 5000]
+      ],
+      "pause_after": 1.2
+    },
+    {
+      "name": "outro",
+      "banner_text": "③ 输出：H.264 mp4 + AAC 配音 + srt 字幕",
+      "narration": "最终输出通用的 H 点二六四格式视频，配音由微软神经语音合成，字幕自动生成并烧录，可直接分享给任何人在任何设备播放。",
+      "actions": [["wait", 500]],
+      "pause_after": 1.0
+    }
+  ]
+}

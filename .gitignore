@@ -1,0 +1,12 @@
+# 本地环境产物
+.venv/
+bin/ffmpeg
+__pycache__/
+*.pyc
+
+# 运行产物
+examples/*/out/
+out/
+*.mp4
+*.webm
+snaps/
