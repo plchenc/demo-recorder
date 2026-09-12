@@ -18,8 +18,10 @@ echo "2/3 安装 playwright + edge-tts（清华镜像）..."
 "$PY" -m pip install -q playwright edge-tts -i "$PIP_MIRROR"
 
 echo "3/3 浏览器 ..."
-if [ -x /opt/google/chrome/chrome ] || command -v google-chrome >/dev/null 2>&1 \
-   || command -v chromium >/dev/null 2>&1 || command -v chromium-browser >/dev/null 2>&1; then
+SYS_BROWSERS="/opt/google/chrome/chrome /usr/bin/google-chrome /usr/bin/google-chrome-stable /usr/bin/chromium /usr/bin/chromium-browser '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' '/Applications/Chromium.app/Contents/MacOS/Chromium'"
+FOUND=0
+for b in $SYS_BROWSERS; do [ -x "$b" ] && FOUND=1 && break; done
+if [ "$FOUND" = "1" ]; then
   echo "  检测到系统 Chrome/Chromium，跳过下载（record.py 自动使用）"
 else
   echo "  下载 playwright chromium（npmmirror 镜像）..."

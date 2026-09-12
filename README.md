@@ -37,9 +37,23 @@ bash install.sh     # 独立 venv + playwright + edge-tts（清华镜像）+ 浏
 bash check_env.sh   # 7 项自检，全绿即就绪
 ```
 
-浏览器优先复用系统 Chrome/Chromium；没有则自动下载 playwright chromium
-（npmmirror 镜像加速）。ffmpeg 需要 22+ 版本：`apt install ffmpeg`，
-或 `npm i ffmpeg-static`，或静态包放 `bin/ffmpeg`，或 `export FFMPEG=<路径>`。
+浏览器优先复用系统 Chrome/Chromium（Linux/macOS 自动探测）；没有则自动下载
+playwright chromium（npmmirror 镜像加速）。
+
+**ffmpeg 需自备**（包里不带二进制）：
+
+| 平台 | 安装方式 |
+|---|---|
+| macOS | `brew install ffmpeg`（推荐先装 [Homebrew](https://brew.sh)） |
+| Linux 有 sudo | `apt install ffmpeg` |
+| 通用（无 sudo） | `npm install ffmpeg-static` 后 `export FFMPEG=<二进制路径>`；或静态包（Linux [johnvansickle](https://johnvansickle.com/ffmpeg/) / macOS [evermeet.cx](https://evermeet.cx/ffmpeg/)）解压放 `bin/ffmpeg` |
+
+**macOS 额外说明**：
+- `python3` 由 Xcode 命令行工具提供：首次使用先跑 `xcode-select --install`
+- 中文字体系统自带（苹方 PingFang SC），字幕直接可用；若烧录乱码：
+  `export DEMO_SUB_FONT='PingFang SC'`
+- Apple Silicon（M1/M2/M3/M4）与 Intel 均支持，playwright/edge-tts 均有原生轮子
+- "无法验证开发者"提示与本项目无关（我们不装内核扩展/APP，仅命令行工具）
 
 ## 2. 五分钟上手
 
@@ -170,6 +184,8 @@ bash run.sh my.json --mix-only      # 只重新合成（换字幕开关/清晰�
 | root 容器 | 已自动加 `--no-sandbox`；视频闪烁则加 `--disable-dev-shm-usage`（已默认） |
 | 想换声音 | `voice` 字段；列出全部：`.venv/bin/edge-tts --list-voices | grep zh-CN` |
 | 音量小 | mix.py 里 `volume=1.0` 调大（如 1.4） |
+| macOS 字幕乱码 | `export DEMO_SUB_FONT='PingFang SC'`；若 ffmpeg 为 brew 安装仍乱码，换 `brew install --cask font-noto-cjk` 后用 Noto Sans CJK SC |
+| macOS 找不到浏览器 | 装了 Chrome 即自动识别；未装则 install.sh 会下载 playwright chromium |
 
 ## 7. 目录结构
 

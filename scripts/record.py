@@ -20,9 +20,14 @@ from playwright.sync_api import sync_playwright
 # ---------------- 通用工具 ----------------
 
 CHROME_CANDIDATES = [
+    # Linux
     "/opt/google/chrome/chrome", "/usr/bin/google-chrome",
     "/usr/bin/google-chrome-stable", "/usr/bin/chromium",
     "/usr/bin/chromium-browser",
+    # macOS
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "/Applications/Chromium.app/Contents/MacOS/Chromium",
+    "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
 ]
 
 

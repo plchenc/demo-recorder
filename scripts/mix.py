@@ -30,8 +30,18 @@ def shutil_which(name):
     return which(name)
 
 
+MAC_ZH_FONTS = [  # macOS 系统自带（fc-list 不可用时的 fallback 检测）
+    ("/System/Library/Fonts/PingFang.ttc", "PingFang SC"),
+    ("/System/Library/Fonts/Hiragino Sans GB.ttc", "Hiragino Sans GB"),
+    ("/Library/Fonts/Arial Unicode.ttf", "Arial Unicode MS"),
+]
+
+
 def find_zh_font():
-    """探测系统中文字体（subtitles 滤镜烧录用），没有则返回 None"""
+    """探测中文字体（subtitles 滤镜烧录用）。env DEMO_SUB_FONT 可强制指定。"""
+    forced = os.environ.get("DEMO_SUB_FONT")
+    if forced:
+        return forced
     try:
         r = subprocess.run(["fc-list", ":lang=zh", "family"],
                            capture_output=True, text=True, timeout=10)
@@ -39,12 +49,17 @@ def find_zh_font():
         for line in r.stdout.splitlines():
             for fam in line.split(","):
                 fams.add(fam.strip())
-    except Exception:  # noqa: BLE001
+    except Exception:  # noqa: BLE001  # macOS 无 fc-list（无 fontconfig CLI）
+        fams = None
+    if fams is not None:
+        for want in ["Noto Sans CJK SC", "Noto Sans CJK", "WenQuanYi Micro Hei",
+                     "WenQuanYi Zen Hei", "AR PL UKai CN", "AR PL UMing CN"]:
+            if want in fams:
+                return want
         return None
-    for want in ["Noto Sans CJK SC", "Noto Sans CJK", "WenQuanYi Micro Hei",
-                 "WenQuanYi Zen Hei", "AR PL UKai CN", "AR PL UMing CN"]:
-        if want in fams:
-            return want
+    for path, name in MAC_ZH_FONTS:  # macOS: 按字体文件存在性判定
+        if os.path.exists(path):
+            return name
     return None
 
 
