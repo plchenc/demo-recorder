@@ -187,7 +187,21 @@ bash run.sh my.json --mix-only      # 只重新合成（换字幕开关/清晰�
 | macOS 字幕乱码 | `export DEMO_SUB_FONT='PingFang SC'`；若 ffmpeg 为 brew 安装仍乱码，换 `brew install --cask font-noto-cjk` 后用 Noto Sans CJK SC |
 | macOS 找不到浏览器 | 装了 Chrome 即自动识别；未装则 install.sh 会下载 playwright chromium |
 
-## 7. 目录结构
+## 7. 在 opencode / Claude Code 等 Agent 中安装
+
+SKILL.md 遵循 [Agent Skills](https://agentskills.io) 开放规范，兼容 opencode、
+Claude Code 等支持该规范的工具。以 opencode 为例：
+
+```bash
+git clone https://github.com/plchenc/demo-recorder.git
+mkdir -p ~/.config/opencode/skills
+ln -s "$(pwd)/demo-recorder" ~/.config/opencode/skills/demo-recorder   # 软链，git pull 即更新
+opencode run "用 demo-recorder 的 hello 示例录一段（--skip-audio）"      # agent 自主执行
+```
+
+Claude Code：`ln -s ... ~/.claude/skills/demo-recorder`（同样识别 SKILL.md）。
+
+## 8. 目录结构
 
 ```
 demo-recorder/
