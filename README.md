@@ -75,6 +75,9 @@ bash run.sh examples/apple/scenario.json
 收起菜单。注意：在线示例依赖目标站点当前结构与网络可达性，站点改版后需更新
 剧本中的选择器。
 
+成片效果可直接观看：[`examples/apple/apple-home-demo.mp4`](examples/apple/apple-home-demo.mp4)
+（62s，含 v1.2 信息片头）。
+
 ## 3. 写你自己的剧本
 
 新建 `my.json`（完整字段见第 4 节），然后：

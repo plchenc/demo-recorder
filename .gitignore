@@ -10,3 +10,6 @@ out/
 *.mp4
 *.webm
 snaps/
+
+# 官方示例成片展示（精确放行，勿扩大规则）
+!examples/apple/apple-home-demo.mp4
