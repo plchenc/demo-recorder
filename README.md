@@ -2,6 +2,15 @@
 
 写一份 JSON 剧本，自动产出**带配音讲解、带字幕、画面真实操作**的 mp4 演示视频。
 
+> **收到包的同事请从这里开始**（假设解压到任意目录）：
+> ```bash
+> cd demo-recorder
+> bash install.sh       # 1. 装独立环境（约 2 分钟，国内镜像，不动系统）
+> bash check_env.sh     # 2. 自检，全绿即就绪
+> bash run.sh examples/hello/scenario.json   # 3. 跑通示例 → hello-demo.mp4
+> ```
+> 然后照第 3 节写你自己的剧本即可。卡住了看第 6 节 FAQ。
+
 ```
 你的剧本.json ──► ① edge-tts 配音（微软神经语音，无需 API key）
                   ② Playwright 录屏（headless Chrome，真实操作页面）
