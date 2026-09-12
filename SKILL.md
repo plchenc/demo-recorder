@@ -1,17 +1,26 @@
 ---
 name: demo-recorder
 description: >
-  网页演示视频一键成片：写一份 JSON 剧本 → 自动配音（edge-tts 神经语音）+
-  Playwright 真实操作录屏（headless Chrome 内部合成，无需桌面环境）+
-  字幕自动生成烧录 + ffmpeg 混音转 H.264。适用于产品演示、操作教程、
-  AI 应用 showcase 视频。
+  用自然语言创建录屏讲解视频：用户用一句话描述想演示什么，你写剧本 JSON →
+  自动配音（edge-tts 神经语音）+ Playwright 真实操作录屏（headless Chrome，
+  无需桌面）+ 字幕烧录 + ffmpeg 合成 mp4。用户不必会写代码或剪辑。
+  适用于产品演示、操作教程、AI 应用 showcase 视频。
 version: 1.2
 ---
 
 # demo-recorder
 
-把「写剧本」变成「交片」：`bash run.sh <剧本.json>` 一条命令产出带配音和字幕的
-mp4 演示视频（H.264 + AAC，任何设备可播）。
+把「一句话需求」变成「成品讲解视频」：`bash run.sh <剧本.json>` 一条命令
+产出带配音和字幕的 mp4（H.264 + AAC，任何设备可播）。
+
+## 接到自然语言需求时的工作流
+
+1. **理解需求**：目标页面（URL）、讲什么（功能点/流程）、语言与声音偏好、时长
+2. **探测页面**：不确定选择器时，先用一次性 playwright 脚本读目标页 DOM
+   （类名/文案/placeholder），或让用户提供关键元素描述
+3. **写剧本**：按下方速查生成 scenario.json（步骤=演示逻辑，narration=解说词）
+4. **执行**：`bash run.sh <剧本.json>`；首次使用先跑 hello 示例验证环境
+5. **交付**：报告成片路径 + 时长，说明可 `--skip-audio`/`--mix-only` 迭代
 
 ## 何时用
 

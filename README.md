@@ -1,96 +1,58 @@
-# demo-recorder — 网页演示视频一键成片
+# demo-recorder — 用自然语言创建录屏讲解
 
-写一份 JSON 剧本，自动产出**带配音讲解、带字幕、画面真实操作**的 mp4 演示视频。
+**告诉 AI 你想演示什么，它来写剧本、配音、录屏、加字幕，交给你成品视频。**
 
-> **收到包的同事请从这里开始**（假设解压到任意目录）：
-> ```bash
-> cd demo-recorder
-> bash install.sh       # 1. 装独立环境（约 2 分钟，国内镜像，不动系统）
-> bash check_env.sh     # 2. 自检，全绿即就绪
-> bash run.sh examples/hello/scenario.json   # 3. 跑通示例 → hello-demo.mp4
-> ```
-> 然后照第 3 节写你自己的剧本即可。卡住了看第 6 节 FAQ。
+不需要你会写代码，不需要你会剪辑，不需要桌面环境。对 AI 助手说一句话，
+几分钟后收到一段真实操作的中文配音讲解视频（H.264 mp4，任何设备可播）。
 
 ```
-你的剧本.json ──► ① edge-tts 配音（微软神经语音，无需 API key）
-                  ② Playwright 录屏（headless Chrome，真实操作页面）
-                  ③ ffmpeg 合成（音画对齐 + 字幕烧录 + H.264）
-                          │
-                          ▼
-                 demo.mp4（H.264 + AAC，任何设备可播）
+你（说话）："给 apple.com.cn 首页录段讲解，中文女声，重点演示顶部菜单悬停展开"
+        │
+        ▼
+AI + demo-recorder：理解需求 → 写剧本 JSON → edge-tts 配音
+        → Playwright 真实操作页面并录屏 → 字幕烧录 → ffmpeg 合成
+        │
+        ▼
+你（收货）：apple-home-demo.mp4（62s，配音+字幕+步骤角标，效果见下方链接）
 ```
 
-**特点**
-- ✅ 真实操作：视频里的每次点击、输入都是浏览器真实执行，无剪辑无拼接
-- ✅ 无需桌面：headless Chrome 内部合成录屏，纯服务器（无 GUI/Wayland）可用
-- ✅ 中文配音：微软 edge-tts 神经语音（默认晓晓女声），无需 API key
-- ✅ 自动字幕：解说词按句切分、自动对时间轴、烧录进画面（可关）
-- ✅ 音画对齐：每步画面自动停留 ≥ 解说时长，解说永远完整不被截断
-- ✅ 环境自包含：独立 venv，国内镜像安装，不影响系统
+👉 **先看真实成片**：[`examples/apple/apple-home-demo.mp4`](examples/apple/apple-home-demo.mp4)
+——由一句自然语言需求驱动生成，视频里每次点击、悬停、输入都是浏览器真实执行。
 
 ---
 
-## 1. 安装（一次性）
+## 方式一：说人话（推荐，零门槛）
+
+把 demo-recorder 配到你的 AI 助手（opencode / Claude Code 等支持
+[Agent Skills](https://agentskills.io) 规范的工具），之后**全程只需要说话**。
+
+**配一次，3 条命令：**
 
 ```bash
-bash install.sh     # 独立 venv + playwright + edge-tts（清华镜像）+ 浏览器
-bash check_env.sh   # 7 项自检，全绿即就绪
+git clone https://github.com/plchenc/demo-recorder.git
+cd demo-recorder && bash install.sh        # 独立环境，国内镜像，不动系统
+ln -s "$(pwd)" ~/.config/opencode/skills/demo-recorder    # opencode；Claude Code 用 ~/.claude/skills/
 ```
 
-浏览器优先复用系统 Chrome/Chromium（Linux/macOS 自动探测）；没有则自动下载
-playwright chromium（npmmirror 镜像加速）。
+**之后想录什么，直接说：**
 
-**ffmpeg 需自备**（包里不带二进制）：
-
-| 平台 | 安装方式 |
+| 你说 | 你收到 |
 |---|---|
-| macOS | `brew install ffmpeg`（推荐先装 [Homebrew](https://brew.sh)） |
-| Linux 有 sudo | `apt install ffmpeg` |
-| 通用（无 sudo） | `npm install ffmpeg-static` 后 `export FFMPEG=<二进制路径>`；或静态包（Linux [johnvansickle](https://johnvansickle.com/ffmpeg/) / macOS [evermeet.cx](https://evermeet.cx/ffmpeg/)）解压放 `bin/ffmpeg` |
+| 「给 localhost:3101 的本体应用录个 3 分钟功能介绍，重点演示规则引擎怎么禁售违规商品」 | 功能介绍视频，配音字幕齐全 |
+| 「给我们官网首页录段英文男声讲解」 | `voice: en-US-…` 男声成片 |
+| 「这版只改了操作顺序，配音别重录」 | agent 自动用 `--skip-audio` 复用配音 |
+| 「把字幕字号调大重新合成」 | agent 自动用 `--mix-only` 只重合成 |
 
-**macOS 额外说明**：
-- `python3` 由 Xcode 命令行工具提供：首次使用先跑 `xcode-select --install`
-- 中文字体系统自带（苹方 PingFang SC），字幕直接可用；若烧录乱码：
-  `export DEMO_SUB_FONT='PingFang SC'`
-- Apple Silicon（M1/M2/M3/M4）与 Intel 均支持，playwright/edge-tts 均有原生轮子
-- "无法验证开发者"提示与本项目无关（我们不装内核扩展/APP，仅命令行工具）
-
-## 2. 五分钟上手
+AI 会自己读懂目标页面结构、写剧本、调用工具、验证产物，你验收 mp4 即可。
+第一次使用前建议让 agent 跑一遍自带示例验证环境：
 
 ```bash
-bash run.sh examples/hello/scenario.json
-# 产出 hello-demo.mp4（工作目录 examples/hello/out/）
+bash run.sh examples/hello/scenario.json   # 30~60s 后产出 hello-demo.mp4 即成功
 ```
 
-自带示例演示了点击、逐字输入、下拉选择、等待文本四类动作。
+## 方式二：写剧本（进阶，精确控制每一步）
 
-**在线网站示例**（真实用户案例，Mac 上录制）：
-
-```bash
-bash run.sh examples/apple/scenario.json
-# Apple 官网首页菜单讲解：hover 展开导航子菜单 + 滚动 + 5 段解说，58s 成片
-```
-
-展示了进阶用法：`:has-text()` 组合定位、`hover` 触发悬浮菜单、`eval` 派发事件
-收起菜单。注意：在线示例依赖目标站点当前结构与网络可达性，站点改版后需更新
-剧本中的选择器。
-
-成片效果可直接观看：[`examples/apple/apple-home-demo.mp4`](examples/apple/apple-home-demo.mp4)
-（62s，含 v1.2 信息片头）。
-
-## 3. 写你自己的剧本
-
-新建 `my.json`（完整字段见第 4 节），然后：
-
-```bash
-bash run.sh my.json                 # 全流程
-bash run.sh my.json -w out2         # 指定工作目录
-bash run.sh my.json --skip-audio    # 改了操作、没改台词 → 复用已有配音
-bash run.sh my.json --record-only   # 只录屏（无声快速预览）
-bash run.sh my.json --mix-only      # 只重新合成（换字幕开关/清晰度）
-```
-
-剧本最小结构：
+不依赖 AI、想精确掌控每个动作时，手写 `scenario.json`：
 
 ```json
 {
@@ -119,7 +81,70 @@ bash run.sh my.json --mix-only      # 只重新合成（换字幕开关/清晰�
 }
 ```
 
-## 4. 剧本字段全表
+```bash
+bash run.sh my.json                 # 全流程
+bash run.sh my.json --skip-audio    # 改了操作、没改台词 → 复用已有配音
+bash run.sh my.json --record-only   # 只录屏（无声快速预览）
+bash run.sh my.json --mix-only      # 只重新合成（换字幕开关/清晰度）
+```
+
+> 用哪种方式都行，也可以混用：先让 AI 生成剧本草稿，你手工微调后自己跑。
+
+---
+
+## 特点
+
+- ✅ **真实操作**：视频里的每次点击、输入都是浏览器真实执行，无剪辑无拼接
+- ✅ **无需桌面**：headless Chrome 内部合成录屏，纯服务器（无 GUI/Wayland）可用
+- ✅ **中文配音**：微软 edge-tts 神经语音（默认晓晓女声），无需 API key
+- ✅ **自动字幕**：解说词按句切分、自动对时间轴、烧录进画面（可关）
+- ✅ **音画对齐**：每步画面自动停留 ≥ 解说时长，解说永远完整不被截断
+- ✅ **信息片头**：成片首帧展示工具与元信息 2 秒（可关可调）
+- ✅ **环境自包含**：独立 venv，国内镜像安装，不影响系统
+
+## 安装与环境（两种方式共用）
+
+```bash
+bash install.sh     # 独立 venv + playwright + edge-tts（清华镜像）+ 浏览器
+bash check_env.sh   # 7 项自检，全绿即就绪
+```
+
+浏览器优先复用系统 Chrome/Chromium（Linux/macOS 自动探测）；没有则自动下载
+playwright chromium（npmmirror 镜像加速）。
+
+**ffmpeg 需自备**（包里不带二进制）：
+
+| 平台 | 安装方式 |
+|---|---|
+| macOS | `brew install ffmpeg`（推荐先装 [Homebrew](https://brew.sh)） |
+| Linux 有 sudo | `apt install ffmpeg` |
+| 通用（无 sudo） | `npm install ffmpeg-static` 后 `export FFMPEG=<二进制路径>`；或静态包（Linux [johnvansickle](https://johnvansickle.com/ffmpeg/) / macOS [evermeet.cx](https://evermeet.cx/ffmpeg/)）解压放 `bin/ffmpeg` |
+
+**macOS 额外说明**：
+- `python3` 由 Xcode 命令行工具提供：首次使用先跑 `xcode-select --install`
+- 中文字体系统自带（苹方 PingFang SC），字幕直接可用；若烧录乱码：
+  `export DEMO_SUB_FONT='PingFang SC'`
+- Apple Silicon（M1/M2/M3/M4）与 Intel 均支持，playwright/edge-tts 均有原生轮子
+- "无法验证开发者"提示与本项目无关（我们不装内核扩展/APP，仅命令行工具）
+
+## 自带示例
+
+```bash
+bash run.sh examples/hello/scenario.json    # 本地静态页：点击/输入/下拉/等待四类动作
+bash run.sh examples/apple/scenario.json    # 在线网站：Apple 官网菜单讲解（58s）
+```
+
+apple 示例来自真实用户（Mac 上录制），展示进阶用法：`:has-text()` 组合定位、
+`hover` 触发悬浮菜单、`eval` 派发事件收起菜单。注意：在线示例依赖目标站点
+当前结构与网络可达性，站点改版后需更新剧本中的选择器。
+
+成片效果可直接观看：[`examples/apple/apple-home-demo.mp4`](examples/apple/apple-home-demo.mp4)。
+
+---
+
+# 参考手册
+
+## 剧本字段全表
 
 **顶层（meta）**
 
@@ -133,7 +158,7 @@ bash run.sh my.json --mix-only      # 只重新合成（换字幕开关/清晰�
 | `banner` | true | 右下角步骤角标（当前演示到哪一步） |
 | `intro_card` | true | 首帧信息片头：展示工具名/版本/能力/本片元信息，保持 2 秒后进入演示 |
 | `intro_card_secs` | 2.0 | 片头停留秒数（设 0 且 intro_card=false 可完全关闭） |
-| `out` | out/demo.mp4 | 成片路径 |
+| `out` | out/demo.mp4 | 成片路径（相对路径按工作目录解析） |
 | `tail_hold` | 1.5 | 结束后静止秒数 |
 | `chrome_path` | 自动 | 指定浏览器（默认自动找系统 Chrome → playwright 内置） |
 
@@ -175,11 +200,12 @@ bash run.sh my.json --mix-only      # 只重新合成（换字幕开关/清晰�
 | `ph:xxx` | 输入框 placeholder | `ph:请输入客户名` |
 | `role:角色:名称` | ARIA 角色精确匹配 | `role:button:发送`、`role:tab:本体建模` |
 
-## 5. 工作原理（音画对齐）
+## 工作原理（音画对齐）
 
 ```
 ① gen_audio: 解说词 → seg_01_xxx.mp3 … + manifest.json（每段精确时长）
 ② record:    录屏时记 stamps.json = 每步起始毫秒；每步停留 ≥ 解说时长
+             （信息片头计入时间轴：片首 2s 纯画面，无音频无字幕）
 ③ mix:       ffmpeg filter_complex
              [n]adelay=<stamp_ms> → amix(normalize=0 保持音量) → aac
              视频: scale + subtitles(srt 烧录) → libx264 yuv420p faststart
@@ -188,7 +214,7 @@ bash run.sh my.json --mix-only      # 只重新合成（换字幕开关/清晰�
 出问题时可分别重跑三步（见 run.sh 分步模式）；`out/` 下保留中间产物
 （raw.webm / stamps.json / subtitles.srt / audio/ / snaps/）。
 
-## 6. 常见问题
+## 常见问题
 
 | 现象 | 原因与解决 |
 |---|---|
@@ -198,26 +224,19 @@ bash run.sh my.json --mix-only      # 只重新合成（换字幕开关/清晰�
 | 找不到元素 | 用 `snap` 动作存截图肉眼核对；SPA 动态内容用 `wait_text` 而非固定 wait |
 | Gradio 页面 | Tab 用 `role:tab:名称`，按钮 `role:button:名称`；Accordion 展开后的内容才在 DOM |
 | root 容器 | 已自动加 `--no-sandbox`；视频闪烁则加 `--disable-dev-shm-usage`（已默认） |
-| 想换声音 | `voice` 字段；列出全部：`.venv/bin/edge-tts --list-voices | grep zh-CN` |
+| 想换声音 | `voice` 字段；列出全部：`.venv/bin/edge-tts --list-voices \| grep zh-CN` |
 | 音量小 | mix.py 里 `volume=1.0` 调大（如 1.4） |
 | macOS 字幕乱码 | `export DEMO_SUB_FONT='PingFang SC'`；若 ffmpeg 为 brew 安装仍乱码，换 `brew install --cask font-noto-cjk` 后用 Noto Sans CJK SC |
 | macOS 找不到浏览器 | 装了 Chrome 即自动识别；未装则 install.sh 会下载 playwright chromium |
 
-## 7. 在 opencode / Claude Code 等 Agent 中安装
+## 在 Agent 工具中的安装细节
 
-SKILL.md 遵循 [Agent Skills](https://agentskills.io) 开放规范，兼容 opencode、
-Claude Code 等支持该规范的工具。以 opencode 为例：
+- **opencode**：软链到 `~/.config/opencode/skills/demo-recorder`
+- **Claude Code**：软链到 `~/.claude/skills/demo-recorder`
+- 软链方式安装后，仓库目录 `git pull` 即完成 skill 更新
+- Agent 通过 SKILL.md（Agent Skills 规范）了解工具用法，自然语言下指令即可
 
-```bash
-git clone https://github.com/plchenc/demo-recorder.git
-mkdir -p ~/.config/opencode/skills
-ln -s "$(pwd)/demo-recorder" ~/.config/opencode/skills/demo-recorder   # 软链，git pull 即更新
-opencode run "用 demo-recorder 的 hello 示例录一段（--skip-audio）"      # agent 自主执行
-```
-
-Claude Code：`ln -s ... ~/.claude/skills/demo-recorder`（同样识别 SKILL.md）。
-
-## 8. 目录结构
+## 目录结构
 
 ```
 demo-recorder/
@@ -231,5 +250,6 @@ demo-recorder/
 │   ├── record.py       # ② 录屏
 │   └── mix.py          # ③ 合成
 ├── examples/hello/     # 自包含教学示例（静态页+剧本）
+├── examples/apple/     # 在线网站示例（剧本+官方成片）
 └── bin/                # 可选：放 ffmpeg 二进制
 ```
