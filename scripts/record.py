@@ -99,10 +99,10 @@ def intro_card_html(sc):
 <style>{INTRO_CARD_CSS}</style></head><body><div class="wrap">
   <div class="logo">🎬</div>
   <h1>demo-<span class="accent">recorder</span></h1>
-  <div class="slogan">一份 JSON 剧本 → 自动配音 · 真实录屏 · 字幕成片</div>
-  <div class="feats"><span class="feat">edge-tts 配音</span>
-    <span class="feat">Playwright 真实操作</span>
-    <span class="feat">srt 字幕烧录</span><span class="feat">H.264 通用格式</span></div>
+  <div class="slogan">你说要演示什么 → 它配音、真实操作、加字幕，直接出成片</div>
+  <div class="feats"><span class="feat">真人感 AI 配音</span>
+    <span class="feat">画面 100% 真实操作</span>
+    <span class="feat">字幕直接嵌在画面里</span><span class="feat">手机电脑都能播</span></div>
   <div class="meta"><b>{title}</b><br>
     v{_skill_version()} · {vw}×{vh} · {today}</div>
 </div></body></html>"""

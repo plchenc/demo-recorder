@@ -5,7 +5,7 @@ description: >
   自动配音（edge-tts 神经语音）+ Playwright 真实操作录屏（headless Chrome，
   无需桌面）+ 字幕烧录 + ffmpeg 合成 mp4。用户不必会写代码或剪辑。
   适用于产品演示、操作教程、AI 应用 showcase 视频。
-version: 1.2
+version: 1.2.2
 ---
 
 # demo-recorder
