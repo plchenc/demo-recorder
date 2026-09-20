@@ -71,6 +71,9 @@ def main():
     ap.add_argument("--meta", help="meta.json")
     ap.add_argument("-w", "--workdir", default="out")
     ap.add_argument("--demo", action="store_true", help="内置示例参数+跳过正片校验")
+    ap.add_argument("--audio", default="",
+                    help="正片音轨（m4a/wav，按正片自身时间轴；"
+                         "自动延后至片头+技术卡结束处）")
     a = ap.parse_args()
 
     if a.demo:
@@ -147,8 +150,26 @@ def main():
         for _, seg_file in order:
             fh.write(f"file '{seg_file}'\n")
     run([ff, "-y", "-f", "concat", "-safe", "0", "-i", list_f,
-         "-c", "copy", "-movflags", "+faststart", out])
-    print(f"✓ selfdrive 成片: {out}")
+         "-c:v", "libx264", "-crf", "20", "-preset", "fast",
+         "-pix_fmt", "yuv420p",
+         "-movflags", "+faststart", out])
+    if a.audio:
+        # 音轨对齐：延后 = 片头+技术卡时长（正片音效从正片起点算）
+        front = sum(float(secs.get(s, d)) for s, d in
+                    [("head", 3.0), ("tech", 4.0)] if s in pngs)
+        run([ff, "-y", "-i", a.audio,
+             "-af", f"adelay={int(front * 1000)}|{int(front * 1000)}",
+             "-c:a", "aac", "-b:a", "128k",
+             os.path.join(a.workdir, "audio_shifted.m4a")])
+        final_a = out + ".a.mp4"
+        run([ff, "-y", "-i", out, "-i",
+             os.path.join(a.workdir, "audio_shifted.m4a"),
+             "-map", "0:v", "-map", "1:a",
+             "-c:v", "copy", "-c:a", "copy",
+             "-movflags", "+faststart", final_a])
+        os.replace(final_a, out)
+    print(f"✓ selfdrive 成片: {out}"
+          + ("（含音轨）" if a.audio else ""))
     print(f"  段落顺序: {' → '.join(s for s, _ in order)}")
 
 
