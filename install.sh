@@ -15,7 +15,7 @@ PY="$HERE/.venv/bin/python3"
 
 echo "2/3 安装 playwright + edge-tts（清华镜像）..."
 "$PY" -m pip install -q --upgrade pip -i "$PIP_MIRROR"
-"$PY" -m pip install -q playwright edge-tts -i "$PIP_MIRROR"
+"$PY" -m pip install -q playwright edge-tts pillow -i "$PIP_MIRROR"
 
 echo "3/3 浏览器 ..."
 SYS_BROWSERS="/opt/google/chrome/chrome /usr/bin/google-chrome /usr/bin/google-chrome-stable /usr/bin/chromium /usr/bin/chromium-browser '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' '/Applications/Chromium.app/Contents/MacOS/Chromium'"

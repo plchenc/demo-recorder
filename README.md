@@ -248,7 +248,9 @@ demo-recorder/
 ├── scripts/
 │   ├── gen_audio.py    # ① 配音
 │   ├── record.py       # ② 录屏
-│   └── mix.py          # ③ 合成
+│   ├── mix.py          # ③ 合成
+│   ├── cards.py        # selfdrive 卡片（片头/技术说明/结尾）
+│   └── selfdrive.py    # selfdrive 模式：程序自驱演示成片
 ├── examples/hello/     # 自包含教学示例（静态页+剧本）
 ├── examples/apple/     # 在线网站示例（剧本+官方成片）
 └── bin/                # 可选：放 ffmpeg 二进制
