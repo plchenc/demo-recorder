@@ -9,14 +9,16 @@ description: >
   适用于产品演示、操作教程、AI 应用 showcase 视频。
   另含 selfdrive 模式：程序自驱型演示（游戏 AI/仿真/机器人自己跑画面）的
   片头+技术说明卡+结尾卡 1080p 成片合成。
-description_zh: 用自然语言生成带配音与字幕的录屏演示视频（真实浏览器操作录制，
-  无需桌面环境），支持两种模式：agent 操作演示、程序自驱型演示（游戏 AI/仿真
-  画面自动包装片头、技术说明卡与结尾）。
-description_en: Generate narrated screen-demo videos from a natural-language
-  scenario: neural TTS narration + real headless-Chrome operation recording +
-  burned-in subtitles + ffmpeg mp4, no desktop needed. Two modes: agent-driven
-  demos, and selfdrive packaging (intro/tech/end cards) for program-driven
-  demos such as game AI or simulations.
+description_zh: >
+  用自然语言生成带配音与字幕的录屏演示视频（真实浏览器操作录制，无需桌面
+  环境），支持两种模式：agent 操作演示、程序自驱型演示（游戏 AI/仿真画面
+  自动包装片头、技术说明卡与结尾）。
+description_en: >
+  Generate narrated screen-demo videos from a natural-language scenario:
+  neural TTS narration + real headless-Chrome operation recording + burned-in
+  subtitles + ffmpeg mp4, no desktop needed. Two modes: agent-driven demos,
+  and selfdrive packaging (intro/tech/end cards) for program-driven demos
+  such as game AI or simulations.
 version: 1.3.0
 ---
 
